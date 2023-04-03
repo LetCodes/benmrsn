@@ -1,44 +1,113 @@
-# Hello Node!
+<div align="center">
+  <img align="center" width="150" src="./docs/static/img/logo512.png">
+</div>
 
-This project includes a Node.js server script and a web page that connects to it. The front-end page presents a form the visitor can use to submit a color name, sending the submitted value to the back-end API running on the server. The server returns info to the page that allows it to update the display with the chosen color. 🎨
+A delightfully simple website and r&eacute;sum&eacute; generator for students, researchers, and engineers.
 
-[Node.js](https://nodejs.org/en/about/) is a popular runtime that lets you run server-side JavaScript. This project uses the [Fastify](https://www.fastify.io/) framework and explores basic templating with [Handlebars](https://handlebarsjs.com/).
+---
 
-_Last updated: 20 Mar 2023_
+<div align="center">
+
+|                     **Demo**                     | **Documentation** |                                            **Videos**                                             |
+| :----------------------------------------------: | :---------------: | :-----------------------------------------------------------------------------------------------: |
+| [Example](https://profileio.lakshmananumolu.com) |  [Documentation]  | [on YouTube](https://www.youtube.com/watch?v=NgvQkzN_NhA&list=PLO8GzHGEyzk7KTVl1Pda0wDMGcEfTg9Pi) |
+
+</div>
+
+---
+
+<div align="center">
+
+Try editing `_profile/profile_web.yml` on CodeSandbox
+
+</div>
+
+<div align="center">
+
+[![Edit profileio](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/profileio-0gqoo?fontsize=14&hidenavigation=1&theme=dark&file=/_profile/profile_web.yml)
+
+</div>
+
+---
+
+## Features
+
+- Generate website from YAML based profile
+- Generate r&eacute;sum&eacute; with different themes
+- Schema used in YAML documents extends the schema from [JSON Resume](https://jsonresume.org)
+- `gh-pages` branch is generated via github actions
+- Branch `deployment_platforms` pushed by github actions can be used as production branch to deploy with [netlify]
+
+![demo](./docs/static/img/profileio-demo.gif)
 
 ## Prerequisites
 
-You'll get best use out of this project if you're familiar with basic JavaScript. If you've written JavaScript for client-side web pages this is a little different because it uses server-side JS, but the syntax is the same!
+- Basic knowledge on [YAML] format
+- Write [Markdown] content
 
-## What's in this project?
+## File structure
 
-← `README.md`: That’s this file, where you can tell people what your cool website does and how you built it.
+```sh
+profileio
+├── _profile/
+│   └── profile_web.yml
+│   └── profile_resume.yml
+│   └── images/      <- Place images here
+│   └── files/       <- Place files here
+│   └── *.md
+├── ...
+├── ...
+```
 
-← `public/style.css`: The styling rules for the pages in your site.
+Data from `profile_web.yml` will be used to generate website and `profile_resume.yml` will be used to generate pdf r&eacute;sum&eacute;.
 
-← `server.js`: The **Node.js** server script for your new site. The JavaScript defines the endpoints in the site back-end, one to return the homepage and one to update with the submitted color. Each one sends data to a Handlebars template which builds these parameter values into the web page the visitor sees.
+## Demo
 
-← `package.json`: The NPM packages for your project's dependencies.
+- Source: [profile_web.yml](https://github.com/acrlakshman/profileio/blob/main/_profile/profile_web.yml)
+  - Result: :point_right: [Generated website](https://profileio.lakshmananumolu.com)
+- Source: [profile_resume.yml](https://github.com/acrlakshman/profileio/blob/main/_profile/profile_resume.yml)
+  - Result: :point_right: [Generated R&eacute;sum&eacute;](https://profileio.lakshmananumolu.com/files/resume/resume.pdf)
 
-← `src/`: This folder holds the site template along with some basic data files.
+## How to start?
 
-← `src/pages/index.hbs`: This is the main page template for your site. The template receives parameters from the server script, which it includes in the page HTML. The page sends the user submitted color value in the body of a request, or as a query parameter to choose a random color.
+1. Fork the repository :point_right: [ProfileIO]
+2. _(GitHub pages)_: If you want to deploy website to github pages, rename the repository to `<github username>.github.io`
+3. (One time task): To allow profileio workflows do their job, please enable workflows via `Actions`. After enabling, if you want them to run before make any changes to `main` repo of your branch, click `Run workflow` for `Build and deploy`
+   > Actions -> Build and deploy -> Run workflow -> Branch: main
+4. Update contents of `_profile/` either using github IDE or by cloning your repository and pushing the changes
+5. Wait until github actions complete
+6. _(GitHub pages)_: Add `gh-pages` or `gh-pages-mac` as source for GitHub pages
+   > Your repository -> settings -> GitHub pages -> Source
+7. If you want to deploy to [netlify], use `deployment_platforms` as the production branch in netlify UI and `build` for the directory to publish
+8. If you want to host website on your own server, you may use the directory `build/` after building the project
 
-← `src/colors.json`: A collection of CSS color names. We use this in the server script to pick a random color, and to match searches against color names.
+## How it works?
 
-← `src/seo.json`: When you're ready to share your new site or add a custom domain, change SEO/meta settings in here.
+- Once pushed to github, actions will build both web and pdf r&eacute;sum&eacute;
+- Generated r&eacute;sum&eacute; will be linked to the website and displayed if `showResumeLink` is set in `profile_web.yml`
+- Build files are pushed to `gh-pages`, `gh-pages-mac` branches
+- Source repo, combined with r&eacute;sum&eacute; copied to `_public/files/resume` will be pushed to `deployment_platforms`
 
-## Try this next 🏗️
+## Which branch to use?
 
-Take a look in `TODO.md` for next steps you can try out in your new site!
+- `gh-pages`
+  - Contents of this branch will be built using Linux virtual environment. In most cases you may use this branch, and this is in general available quickly
+  - If you need _Helvetica Neue_ font for the resume, you may use `gh-pages-mac`
+- `gh-pages-mac`
+  - Mac virtual environment will be used to build your resume. With the current github workflow configuration, there is about 5 minutes delay when compared to `gh-pages` for the contents to be available under this branch
+- `deployment_platforms`
+  - Use this branch if you want to deploy your website using netlify
+  - You may also use this if you want github actions to compile your resume
+  - This is almost same as the `main` branch with the exception of the compiled resume, which will be copied to _\_profile/files/resume_
+  - In the current configuration this branch will be updated three times per workflow in the following sequence
+    1. Contents of branch `main` will be made available for this branch
+    2. Resume from Linux build will be pushed to this branch as soon as available
+    3. Resume from Mac build will be pushed as soon as that step completes
 
-___Want a minimal version of this project to build your own Node.js app? Check out [Blank Node](https://glitch.com/edit/#!/remix/glitch-blank-node)!___
+If you find any bugs or need a feature, please [raise an issue](https://github.com/acrlakshman/profileio/issues), or submit a [PR](https://github.com/acrlakshman/profileio/pulls).
 
-![Glitch](https://cdn.glitch.com/a9975ea6-8949-4bab-addb-8a95021dc2da%2FLogo_Color.svg?v=1602781328576)
-
-## You built this with Glitch!
-
-[Glitch](https://glitch.com) is a friendly community where millions of people come together to build web apps and websites.
-
-- Need more help? [Check out our Help Center](https://help.glitch.com/) for answers to any common questions.
-- Ready to make it official? [Become a paid Glitch member](https://glitch.com/pricing) to boost your app with private sharing, more storage and memory, domains and more.
+[profileio]: https://github.com/acrlakshman/profileio
+[documentation]: https://acrlakshman.github.io/profileio/docs/
+[yaml]: https://yaml.org/
+[markdown]: https://en.wikipedia.org/wiki/Markdown
+[netlify]: https://netlify.app
